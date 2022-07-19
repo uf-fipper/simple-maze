@@ -5,7 +5,7 @@ from .mapvalue import MapValue
 
 from typing import List, Tuple, TypeVar
 
-Point = Tuple[int, int]
+Point = namedtuple('Point', 'x y')
 
 
 class Map:
@@ -17,7 +17,7 @@ class Map:
             return True
         return False
 
-    def _get_walls(self, p: Point, lp: Point):
+    def _init_get_walls(self, p: Point, lp: Point):
         """
         获取一个点周围所有的墙
         :param p:
@@ -25,10 +25,10 @@ class Map:
         :return:
         """
         res_temp: List[Point] = [
-            (p[0] + 1, p[1]),
-            (p[0] - 1, p[1]),
-            (p[0], p[1] + 1),
-            (p[0], p[1] - 1),
+            Point(p[0] + 1, p[1]),
+            Point(p[0] - 1, p[1]),
+            Point(p[0], p[1] + 1),
+            Point(p[0], p[1] - 1),
         ]
         res: List[Point] = []
         for point in res_temp:
@@ -39,14 +39,14 @@ class Map:
             res.append(point)
         return res
 
-    def _check_wall(self, p: Point, lp: Point) -> bool:
+    def _init_check_wall(self, p: Point, lp: Point) -> bool:
         """
         检查这个墙是否能生成道路
         :param p: 这个墙
         :param lp: 上一个墙
         :return:
         """
-        temp = self._get_walls(p, lp)
+        temp = self._init_get_walls(p, lp)
         if not temp:
             return False
         for t in temp:
@@ -69,10 +69,10 @@ class Map:
         stack.append((p, lp, step))
         while stack:
             p, lp, step = stack.pop()
-            if not self._check_wall(p, lp):
+            if not self._init_check_wall(p, lp):
                 continue
             self.map[p] = MapValue.road
-            around_walls = self._get_walls(p, lp)
+            around_walls = self._init_get_walls(p, lp)
             if not around_walls:
                 continue
             around_walls = self._random.randarray(around_walls)
