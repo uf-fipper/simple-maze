@@ -162,7 +162,7 @@ class Map:
         """
         pos = pos or self.st
         if self.row <= 1 or self.column <= 1:
-            return []
+            return np.array([])
         queue: Queue[Tuple[Point, Point, int]] = Queue(maxsize=self.row * self.column)
         map_temp = np.empty((self.row, self.column), dtype=Point)
         """
