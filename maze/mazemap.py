@@ -96,8 +96,8 @@ class Map:
                     self.ed = ed_idx
                     ed_get = True
 
-    def __init__(self, row: int, column: int, *, seed: int = None):
-        self._random = Random(seed)
+    def __init__(self, row: int, column: int, *, random: Random = None):
+        self._random = random or Random()
         self.map = np.zeros((row, column), dtype=MapValue)
         self._init_map()
 
