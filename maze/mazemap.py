@@ -8,12 +8,16 @@ from .point import Point
 from queue import Queue
 from collections import namedtuple
 from typing import List, Tuple, TypeVar
+try:
+    from numpy.typing import NDArray
+except ImportError:
+    raise ImportError('请保证numpy版本大于1.21')
 
 
 class Map:
     _random: Random
     """随机数种子"""
-    map: np.ndarray
+    map: NDArray[MapValue]
     """地图"""
     inst_st: Point
     """初始化地图用的点"""
@@ -127,7 +131,7 @@ class Map:
         self.map = np.zeros((row, column), dtype=MapValue)
         self._init_map()
 
-    def _solve_get_roads(self, map_temp: np.ndarray, p: Point):
+    def _solve_get_roads(self, map_temp: NDArray[Point], p: Point):
         """
         获取一个点周围所有没被遍历过的路
         :param map_temp:
@@ -154,7 +158,7 @@ class Map:
 
         return res
 
-    def solve(self, pos: Point = None):
+    def solve(self, pos: Point = None) -> NDArray[Point]:
         """
         求解迷宫
         :param pos: 从某个点开始求解，不指定则从起始点求解
