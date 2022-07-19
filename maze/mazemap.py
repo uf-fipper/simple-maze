@@ -2,7 +2,9 @@ import numpy as np
 
 from .random import Random
 from .mapvalue import MapValue
+from .exceptions import SolveException
 
+from queue import Queue
 from collections import namedtuple
 from typing import List, Tuple, TypeVar
 
@@ -98,8 +100,65 @@ class Map:
     def __init__(self, row: int, column: int, *, seed: int = None):
         self._random = Random(seed)
         self.map = np.zeros((row, column), dtype=MapValue)
-        self.solve_list = np.zeros(row * column)
         self._init_map()
+
+    def _solve_get_roads(self, map_temp: np.ndarray, p: Point):
+        """
+        获取一个点周围所有没被遍历过的路
+        :param map_temp:
+        :param p:
+        :return:
+        """
+        res_temp: List[Point] = [
+            Point(p[0] + 1, p[1]),
+            Point(p[0] - 1, p[1]),
+            Point(p[0], p[1] + 1),
+            Point(p[0], p[1] - 1),
+        ]
+        res: List[Point] = []
+
+        for _p in res_temp:
+            if self.is_overrange(_p):
+                continue
+            idx = map_temp[_p]
+            if idx != Point(-1, -1):
+                continue
+            if self.map[_p] != MapValue.road:
+                continue
+            res.append(_p)
+
+        return res
+
+    def solve(self, pos: Point = None):
+        pos = pos or self.st
+        if self.row <= 1 or self.column <= 1:
+            return []
+        queue: Queue[Tuple[Point, Point, int]] = Queue(maxsize=self.row * self.column)
+        map_temp = np.empty((self.row, self.column), dtype=Point)
+        for i in range(self.row):
+            for j in range(self.column):
+                map_temp[i, j] = Point(-1, -1)
+
+        p = pos
+        lp = Point(-2, -2)
+        step = 0
+        queue.put((p, lp, step))
+        while p != self.ed:
+            p, lp, step = queue.get()
+            map_temp[p] = lp
+            roads = self._solve_get_roads(map_temp, p)
+            for road in roads:
+                queue.put((road, p, step + 1))
+
+        rp = map_temp[self.ed]
+        res = np.empty(step + 1, dtype=Point)
+        for i in range(step - 1, -1, -1):
+            res[i] = rp
+            rp = map_temp[rp]
+        if res[0] != pos:
+            raise SolveException('居然不是从pos开始？？？')
+
+        return res
 
     @property
     def row(self):
