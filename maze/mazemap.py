@@ -108,7 +108,7 @@ class Map:
     def column(self):
         return self.map.shape[1]
 
-    def __str__(self):
+    def __repr__(self):
         temp_res = np.zeros(((self.row + 2), (self.column + 3)), dtype=str)
 
         for i in range(self.column + 2):
@@ -131,6 +131,3 @@ class Map:
         temp_res[self.ed[0] + 1, self.ed[1] + 1] = MapValue.ed.value
 
         return ''.join([''.join(each) for each in temp_res])
-
-    def __repr__(self):
-        return self.__str__()
