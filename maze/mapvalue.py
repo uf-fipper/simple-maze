@@ -31,10 +31,15 @@ class MapValue(enum.Enum):
 
 
 if __name__ == '__main__':
-    @MapValue.road.set_object
-    def _(self: MapValue) -> str:
-        return f' '
-
     @MapValue.wall.set_object
     def _(self: MapValue) -> str:
-        return f'{Back.YELLOW} {Style.RESET_ALL}'
+        return f'{Back.YELLOW}wall{Style.RESET_ALL}'
+
+
+    @MapValue.road.set_object
+    def _(self: MapValue) -> str:
+        return f'road'
+
+
+    print(MapValue.wall.get_object())
+    print(MapValue.road.get_object())
