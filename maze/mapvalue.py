@@ -18,24 +18,22 @@ class MapValue(enum.Enum):
         super().__init__()
         self._play_func: Optional[_T_func] = None
 
-    def add_action(self, func: _T_func) -> _T_func:
+    def set_object(self, func: _T_func) -> _T_func:
         self._play_func = func
         return func
 
-    def action(self, *args, **kwargs) -> Optional[_T_result]:
-        res = None
+    def get_object(self, *args, **kwargs) -> Optional[_T_result]:
         if self._play_func:
-            res = self._play_func(self, *args, **kwargs)
+            return self._play_func(self, *args, **kwargs)
         else:
-            print(self.value, end='')
-        return res
+            return self.value
 
 
 if __name__ == '__main__':
     a = MapValue.road
 
-    @a.add_action
+    @a.set_object
     def _(self: MapValue):
         print(self.value * 3)
 
-    a.action()
+    a.get_object()
