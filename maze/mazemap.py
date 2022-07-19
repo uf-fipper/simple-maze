@@ -90,9 +90,9 @@ class Map:
                 if st_get and ed_get:
                     return
                 if not st_get and self.map[i, j] == MapValue.road:
-                    self.st = i, j
+                    self.st = Point(i, j)
                     st_get = True
-                ed_idx = self.row - 1 - i, self.column - 1 - j
+                ed_idx = Point(self.row - 1 - i, self.column - 1 - j)
                 if not ed_get and self.map[ed_idx] == MapValue.road:
                     self.ed = ed_idx
                     ed_get = True
@@ -152,6 +152,7 @@ class Map:
 
         rp = map_temp[self.ed]
         res = np.empty(step + 1, dtype=Point)
+        res[step] = self.ed
         for i in range(step - 1, -1, -1):
             res[i] = rp
             rp = map_temp[rp]
