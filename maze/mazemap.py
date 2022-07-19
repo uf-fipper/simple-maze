@@ -11,6 +11,17 @@ from typing import List, Tuple, TypeVar
 
 
 class Map:
+    _random: Random
+    """随机数种子"""
+    map: np.ndarray
+    """地图"""
+    inst_st: Point
+    """初始化地图用的点"""
+    st: Point
+    """玩家初始位置"""
+    ed: Point
+    """终点位置"""
+
     def is_overrange(self, p: Point) -> bool:
         i, j = p
         if i < 0 or j < 0:
@@ -22,9 +33,8 @@ class Map:
     def _init_get_walls(self, p: Point, lp: Point):
         """
         获取一个点周围所有的墙
-        :param p:
-        :param lp:
-        :return:
+        :param p: 这个点
+        :param lp: 上一个点
         """
         res_temp: List[Point] = [
             Point(p[0] + 1, p[1]),
@@ -44,8 +54,8 @@ class Map:
     def _init_check_wall(self, p: Point, lp: Point) -> bool:
         """
         检查这个墙是否能生成道路
-        :param p: 这个墙
-        :param lp: 上一个墙
+        :param p: 这个点
+        :param lp: 上一个点
         :return:
         """
         temp = self._init_get_walls(p, lp)
@@ -57,6 +67,16 @@ class Map:
         return True
 
     def _init_map(self):
+        """
+        初始化地图
+
+        inst_st: Point
+        "初始化地图用的点"
+        st: Point
+        "玩家初始位置"
+        ed: Point
+        "终点位置"
+        """
         for i in range(self.row):
             for j in range(self.column):
                 self.map[i, j] = MapValue.wall
@@ -97,6 +117,12 @@ class Map:
                     ed_get = True
 
     def __init__(self, row: int, column: int, *, random: Random = None):
+        """
+        实例化地图对象
+        :param row: 地图宽
+        :param column: 地图长
+        :param random: 随机数种子
+        """
         self._random = random or Random()
         self.map = np.zeros((row, column), dtype=MapValue)
         self._init_map()
@@ -129,11 +155,24 @@ class Map:
         return res
 
     def solve(self, pos: Point = None):
+        """
+        求解迷宫
+        :param pos: 从某个点开始求解，不指定则从起始点求解
+        :return:
+        """
         pos = pos or self.st
         if self.row <= 1 or self.column <= 1:
             return []
         queue: Queue[Tuple[Point, Point, int]] = Queue(maxsize=self.row * self.column)
         map_temp = np.empty((self.row, self.column), dtype=Point)
+        """
+        map_temp 用于记录遍历到某个点时的上一个点是什么
+        如果没有遍历过，则是 Point(-1, -1)
+        
+        例如：
+        map_temp[1, 2] = Point(0, 2)
+        则 (1, 2) 的前一个点是 (0, 2)
+        """
         for i in range(self.row):
             for j in range(self.column):
                 map_temp[i, j] = Point(-1, -1)
