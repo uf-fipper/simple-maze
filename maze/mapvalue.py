@@ -1,9 +1,10 @@
 import enum
 
 from typing import Callable, TypeVar, Any, Optional
+from colorama import Fore, Back, Style
 
 _T_result = TypeVar('_T_result')
-_T_func = TypeVar('_T_func', bound=Callable[..., _T_result])
+_T_func = Callable[["MapValue"], _T_result]
 
 
 class MapValue(enum.Enum):
@@ -22,18 +23,18 @@ class MapValue(enum.Enum):
         self._play_func = func
         return func
 
-    def get_object(self, *args, **kwargs) -> Optional[_T_result]:
+    def get_object(self) -> Optional[_T_result]:
         if self._play_func:
-            return self._play_func(self, *args, **kwargs)
+            return self._play_func(self)
         else:
             return self.value
 
 
 if __name__ == '__main__':
-    a = MapValue.road
+    @MapValue.road.set_object
+    def _(self: MapValue) -> str:
+        return f' '
 
-    @a.set_object
-    def _(self: MapValue):
-        print(self.value * 3)
-
-    a.get_object()
+    @MapValue.wall.set_object
+    def _(self: MapValue) -> str:
+        return f'{Back.YELLOW} {Style.RESET_ALL}'
