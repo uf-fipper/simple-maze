@@ -3,12 +3,11 @@ import numpy as np
 from .random import Random
 from .mapvalue import MapValue
 from .exceptions import SolveException
+from .point import Point
 
 from queue import Queue
 from collections import namedtuple
 from typing import List, Tuple, TypeVar
-
-Point = namedtuple('Point', 'x y')
 
 
 class Map:
