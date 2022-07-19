@@ -3,6 +3,7 @@ import numpy as np
 from .random import Random
 from .mapvalue import MapValue
 
+from collections import namedtuple
 from typing import List, Tuple, TypeVar
 
 Point = namedtuple('Point', 'x y')
