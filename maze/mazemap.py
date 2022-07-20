@@ -9,11 +9,13 @@ from queue import Queue
 from typing import List, Tuple, TypeVar, Optional
 from numpy.typing import NDArray
 
+_T_map = NDArray  # NDArray[MapValue]
+
 
 class Map:
     _random: Random
     """随机数种子"""
-    map: NDArray[MapValue]
+    map: _T_map
     """地图"""
     inst_st: Point
     """初始化地图用的点"""
@@ -104,12 +106,12 @@ class Map:
                 if st_get and ed_get:
                     return
                 if not st_get and self.map[i, j] == MapValue.road:
-                    self.st = Point(i, j)
+                    self.st: Point = Point(i, j)
                     self.map[self.st] = MapValue.st
                     st_get = True
                 ed_idx = Point(self.row - 1 - i, self.column - 1 - j)
                 if not ed_get and self.map[ed_idx] == MapValue.road:
-                    self.ed = ed_idx
+                    self.ed: Point = ed_idx
                     self.map[self.ed] = MapValue.ed
                     ed_get = True
 
@@ -121,10 +123,10 @@ class Map:
         :param random: 随机数种子
         """
         self._random = random or Random()
-        self.map = np.zeros((row, column), dtype=MapValue)
+        self.map: _T_map = np.zeros((row, column), dtype=MapValue)
         self._init_map()
 
-    def _solve_get_roads(self, map_temp: NDArray[Optional[Point]], p: Point):
+    def _solve_get_roads(self, map_temp: _T_map, p: Point):
         """
         获取一个点周围所有没被遍历过的路
         :param map_temp: 记录是否遍历过的地图
@@ -146,7 +148,7 @@ class Map:
 
         return res
 
-    def solve(self, pos: Point = None) -> NDArray[Point]:
+    def solve(self, pos: Point = None) -> NDArray:
         """
         求解迷宫
         :param pos: 从某个点开始求解，不指定则从起始点求解
@@ -156,7 +158,7 @@ class Map:
         if self.row <= 1 or self.column <= 1:
             return np.array([])
         queue: Queue[Tuple[Point, Optional[Point], int]] = Queue(maxsize=self.row * self.column)
-        map_temp: NDArray[Optional[Point]] = np.empty((self.row, self.column), dtype=Point)
+        map_temp: NDArray = np.empty((self.row, self.column), dtype=Point)  # NDArray[Optional[Point]]
         """
         map_temp 用于记录遍历到某个点时的上一个点是什么
         如果没有遍历过，则是 Point(-1, -1)
