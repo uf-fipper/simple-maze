@@ -74,10 +74,6 @@ class Map:
         ed: Point
         "终点位置"
         """
-        for i in range(self.row):
-            for j in range(self.column):
-                self.map[i, j] = MapValue.wall
-
         "初始化地图时所用的初始点"
         inst_st = self.inst_st = Point(self._random.randint(0, self.row - 1), self._random.randint(0, self.column - 1))
 
@@ -124,6 +120,10 @@ class Map:
         """
         self._random = random or Random()
         self.map: _T_map = np.zeros((row, column), dtype=MapValue)
+        for i in range(self.row):
+            for j in range(self.column):
+                self.map[i, j] = MapValue.wall
+
         self._init_map()
 
     def _solve_get_roads(self, map_temp: _T_map, p: Point):
