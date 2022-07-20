@@ -1,3 +1,11 @@
 from collections import namedtuple
 
-Point = namedtuple('Point', 'x y')
+
+class Point(namedtuple('Point', 'x y')):
+    def get_range(self):
+        return [
+            Point(self[0] - 1, self[1]),
+            Point(self[0] + 1, self[1]),
+            Point(self[0], self[1] - 1),
+            Point(self[0], self[1] + 1),
+        ]
