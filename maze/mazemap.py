@@ -14,7 +14,7 @@ _T_map = NDArray  # NDArray[OnShowObject]
 
 
 class Map:
-    _random: Random
+    random: Random
     """随机数种子"""
     map: _T_map
     """地图"""
@@ -76,7 +76,7 @@ class Map:
         "终点位置"
         """
         "初始化地图时所用的初始点"
-        inst_st = self.inst_st = Point(self._random.randint(0, self.row - 1), self._random.randint(0, self.column - 1))
+        inst_st = self.inst_st = Point(self.random.randint(0, self.row - 1), self.random.randint(0, self.column - 1))
 
         stack: List[Tuple[Point, Point, int]] = []
         p = inst_st
@@ -91,7 +91,7 @@ class Map:
             around_walls = self._init_get_walls(p, lp)
             if not around_walls:
                 continue
-            around_walls = self._random.randarray(around_walls)
+            around_walls = self.random.randarray(around_walls)
             for wall in around_walls:
                 stack.append((wall, p, step + 1))
 
@@ -119,7 +119,7 @@ class Map:
         :param column: 地图长
         :param random: 随机数种子
         """
-        self._random = random or Random()
+        self.random = random or Random()
         self.map: _T_map = np.zeros((row, column), dtype=MapValue)
         for i in range(self.row):
             for j in range(self.column):

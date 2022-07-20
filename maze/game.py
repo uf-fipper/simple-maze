@@ -13,7 +13,7 @@ from typing import Optional
 class Game:
     def __init__(self, row: int, column: int, *, random: Random = None):
         self.map = Map(row, column, random=random)
-        self.source_map = Map(row, column, random=self.map._random)
+        self.source_map = Map(row, column, random=self.map.random)
         self.source_map.map = self.map.map.copy()
         self.player = Player(self.map.st)
         self.move_list = np.empty(row * column, dtype=Point)
