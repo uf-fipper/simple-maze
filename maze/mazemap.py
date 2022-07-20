@@ -136,9 +136,9 @@ class Map:
     def _solve_get_roads(self, map_temp: NDArray[Point], p: Point):
         """
         获取一个点周围所有没被遍历过的路
-        :param map_temp:
-        :param p:
-        :return:
+        :param map_temp: 记录是否遍历过的地图
+        :param p: 这个点
+        :return: 所有周围的路
         """
         res_temp: List[Point] = [
             Point(p[0] + 1, p[1]),
