@@ -114,10 +114,12 @@ class Map:
                     return
                 if not st_get and self.map[i, j] == MapValue.road:
                     self.st = Point(i, j)
+                    self.map[self.st] = MapValue.st
                     st_get = True
                 ed_idx = Point(self.row - 1 - i, self.column - 1 - j)
                 if not ed_get and self.map[ed_idx] == MapValue.road:
                     self.ed = ed_idx
+                    self.map[self.ed] = MapValue.ed
                     ed_get = True
 
     def __init__(self, row: int, column: int, *, random: Random = None):
@@ -152,7 +154,7 @@ class Map:
             idx = map_temp[_p]
             if idx != Point(-1, -1):
                 continue
-            if self.map[_p] != MapValue.road:
+            if self.map[_p] not in (MapValue.road, MapValue.st, MapValue.ed):
                 continue
             res.append(_p)
 
@@ -229,8 +231,5 @@ class Map:
             temp_res[self.row + 1, i] = MapValue.border.value
 
         temp_res[self.row + 1, self.column + 2] = '\0'
-
-        temp_res[self.st[0] + 1, self.st[1] + 1] = MapValue.st.value
-        temp_res[self.ed[0] + 1, self.ed[1] + 1] = MapValue.ed.value
 
         return ''.join([''.join(each) for each in temp_res])
