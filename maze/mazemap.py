@@ -2,16 +2,12 @@ import numpy as np
 
 from .random import Random
 from .mapvalue import MapValue
-from .exceptions import SolveException
+from .exceptions import SolveException, QueueEmptyException
 from .point import Point
 
 from queue import Queue
-from collections import namedtuple
-from typing import List, Tuple, TypeVar
-try:
-    from numpy.typing import NDArray
-except ImportError:
-    raise ImportError('请保证numpy版本大于1.21')
+from typing import List, Tuple, TypeVar, Optional
+from numpy.typing import NDArray
 
 
 class Map:
@@ -133,7 +129,7 @@ class Map:
         self.map = np.zeros((row, column), dtype=MapValue)
         self._init_map()
 
-    def _solve_get_roads(self, map_temp: NDArray[Point], p: Point):
+    def _solve_get_roads(self, map_temp: NDArray[Optional[Point]], p: Point):
         """
         获取一个点周围所有没被遍历过的路
         :param map_temp: 记录是否遍历过的地图
@@ -152,7 +148,7 @@ class Map:
             if self.is_overrange(_p):
                 continue
             idx = map_temp[_p]
-            if idx != Point(-1, -1):
+            if idx is not None:
                 continue
             if self.map[_p] not in (MapValue.road, MapValue.st, MapValue.ed):
                 continue
@@ -169,8 +165,8 @@ class Map:
         pos = pos or self.st
         if self.row <= 1 or self.column <= 1:
             return np.array([])
-        queue: Queue[Tuple[Point, Point, int]] = Queue(maxsize=self.row * self.column)
-        map_temp = np.empty((self.row, self.column), dtype=Point)
+        queue: Queue[Tuple[Point, Optional[Point], int]] = Queue(maxsize=self.row * self.column)
+        map_temp: NDArray[Optional[Point]] = np.empty((self.row, self.column), dtype=Point)
         """
         map_temp 用于记录遍历到某个点时的上一个点是什么
         如果没有遍历过，则是 Point(-1, -1)
@@ -181,13 +177,15 @@ class Map:
         """
         for i in range(self.row):
             for j in range(self.column):
-                map_temp[i, j] = Point(-1, -1)
+                map_temp[i, j] = None
 
-        p = pos
-        lp = Point(-2, -2)
+        p: Point = pos
+        lp: Optional[Point] = None
         step = 0
         queue.put((p, lp, step))
         while p != self.ed:
+            if queue.empty():
+                raise QueueEmptyException('队列为空')
             p, lp, step = queue.get()
             map_temp[p] = lp
             roads = self._solve_get_roads(map_temp, p)
