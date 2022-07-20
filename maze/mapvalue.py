@@ -1,45 +1,17 @@
 import enum
 
+from .on_show_object import OnShowObject, _T_func, _T_result
+
 from typing import Callable, TypeVar, Any, Optional
-from colorama import Fore, Back, Style
-
-_T_result = TypeVar('_T_result')
-_T_func = Callable[["MapValue"], _T_result]
 
 
-class MapValue(enum.Enum):
+class MapValue(OnShowObject, enum.Enum):
+    def __init__(self, *args):
+        super().__init__()
+
     empty = '?'
     wall = 'O'
     road = ' '
     border = 'X'
     st = 'P'
     ed = 'E'
-
-    def __init__(self, *args, **kwargs):
-        super().__init__()
-        self._play_func: Optional[_T_func] = None
-
-    def set_object(self, func: _T_func) -> _T_func:
-        self._play_func = func
-        return func
-
-    def get_object(self) -> Optional[_T_result]:
-        if self._play_func:
-            return self._play_func(self)
-        else:
-            return self.value
-
-
-if __name__ == '__main__':
-    @MapValue.wall.set_object
-    def _(self: MapValue) -> str:
-        return f'{Back.YELLOW}wall{Style.RESET_ALL}'
-
-
-    @MapValue.road.set_object
-    def _(self: MapValue) -> str:
-        return f'road'
-
-
-    print(MapValue.wall.get_object())
-    print(MapValue.road.get_object())
