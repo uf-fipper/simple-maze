@@ -221,8 +221,4 @@ class Map:
 
         temp_res[self.row + 1, self.column + 2] = '\0'
 
-        solve_list = self.solve()
-        for p in solve_list:
-            temp_res[p[0] + 1, p[1] + 1] = '.'
-
         return ''.join([''.join(each) for each in temp_res])
