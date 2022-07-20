@@ -167,10 +167,6 @@ class Map:
         map_temp[1, 2] = Point(0, 2)
         则 (1, 2) 的前一个点是 (0, 2)
         """
-        for i in range(self.row):
-            for j in range(self.column):
-                map_temp[i, j] = None
-
         p: Point = pos
         lp: Optional[Point] = None
         step = 0
