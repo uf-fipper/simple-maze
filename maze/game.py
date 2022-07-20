@@ -13,6 +13,8 @@ from typing import Optional
 class Game:
     def __init__(self, row: int, column: int, *, random: Random = None):
         self.map = Map(row, column, random=random)
+        self.source_map = Map(row, column, random=self.map._random)
+        self.source_map.map = self.map.map.copy()
         self.player = Player(self.map.st)
         self.move_list = np.empty(row * column, dtype=Point)
         self.move_step = 0
@@ -58,7 +60,9 @@ class Game:
             next_road = self._move_find_road(p, lp)
             
         self.move_step = step
+        self.map[self.player.pos] = self.source_map[self.player.pos]
         self.player.pos = self.move_list[step]
+        self.map[self.player.pos] = self.player
         self.is_move = True
         self.player.step += step
         self.player.move_times += 1
