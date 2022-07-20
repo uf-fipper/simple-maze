@@ -201,6 +201,9 @@ class Map:
     def column(self):
         return self.map.shape[1]
 
+    def __getitem__(self, item):
+        return self.map[item]
+
     def __repr__(self):
         temp_res = np.zeros(((self.row + 2), (self.column + 3)), dtype=str)
 
