@@ -4,7 +4,7 @@ from .point import Point
 
 from typing import Callable, TypeVar, Optional
 
-_T_func = TypeVar('_T_func', bound=Callable[["MoveStatus", Point], Point])
+_T_func = TypeVar('_T_func', bound=Callable[[Point], Point])
 
 
 class MoveStatus(enum.Enum):
@@ -28,20 +28,20 @@ class MoveStatus(enum.Enum):
 
 
 @MoveStatus.up.set_next
-def _(self: MoveStatus, p: Point):
+def _(p: Point):
     return Point(p[0] - 1, p[1])
 
 
 @MoveStatus.down.set_next
-def _(self: MoveStatus, p: Point):
+def _(p: Point):
     return Point(p[0] + 1, p[1])
 
 
 @MoveStatus.left.set_next
-def _(self: MoveStatus, p: Point):
+def _(p: Point):
     return Point(p[0], p[1] - 1)
 
 
 @MoveStatus.right.set_next
-def _(self: MoveStatus, p: Point):
+def _(p: Point):
     return Point(p[0], p[1] + 1)
