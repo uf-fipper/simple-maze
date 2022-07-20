@@ -19,9 +19,3 @@ class Random(Random):  # type: ignore
         for i, index in enumerate(res_index):
             res[i] = arr[index]
         return res
-
-
-if __name__ == '__main__':
-    r = _Random()
-    a = r.randarray(['a', 'e', *[i for i in range(5)]])
-    print(a)
