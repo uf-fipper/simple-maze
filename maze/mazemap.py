@@ -36,12 +36,7 @@ class Map:
         :param p: 这个点
         :param lp: 上一个点
         """
-        res_temp: List[Point] = [
-            Point(p[0] + 1, p[1]),
-            Point(p[0] - 1, p[1]),
-            Point(p[0], p[1] + 1),
-            Point(p[0], p[1] - 1),
-        ]
+        res_temp = p.get_range()
         res: List[Point] = []
         for point in res_temp:
             if self.is_overrange(point):
@@ -82,11 +77,11 @@ class Map:
                 self.map[i, j] = MapValue.wall
 
         "初始化地图时所用的初始点"
-        inst_st = self.inst_st = (self._random.randint(0, self.row - 1), self._random.randint(0, self.column - 1))
+        inst_st = self.inst_st = Point(self._random.randint(0, self.row - 1), self._random.randint(0, self.column - 1))
 
         stack: List[Tuple[Point, Point, int]] = []
         p = inst_st
-        lp = (-1, -1)
+        lp = Point(-1, -1)
         step = 0
         stack.append((p, lp, step))
         while stack:
@@ -136,12 +131,7 @@ class Map:
         :param p: 这个点
         :return: 所有周围的路
         """
-        res_temp: List[Point] = [
-            Point(p[0] + 1, p[1]),
-            Point(p[0] - 1, p[1]),
-            Point(p[0], p[1] + 1),
-            Point(p[0], p[1] - 1),
-        ]
+        res_temp = p.get_range()
         res: List[Point] = []
 
         for _p in res_temp:
@@ -229,5 +219,9 @@ class Map:
             temp_res[self.row + 1, i] = MapValue.border.value
 
         temp_res[self.row + 1, self.column + 2] = '\0'
+
+        solve_list = self.solve()
+        for p in solve_list:
+            temp_res[p[0] + 1, p[1] + 1] = '.'
 
         return ''.join([''.join(each) for each in temp_res])
