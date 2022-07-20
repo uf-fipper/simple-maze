@@ -14,7 +14,7 @@ class Game:
     def __init__(self, row: int, column: int, *, random: Random = None):
         self.map = Map(row, column, random=random)
         self.player = Player(self.map.st)
-        self.move_list = np.empty((row, column), dtype=Point)
+        self.move_list = np.empty(row * column, dtype=Point)
         self.move_step = 0
         self.is_move = False
 
@@ -31,7 +31,7 @@ class Game:
                 continue
             if _p == lp:
                 continue
-            if self.map[_p] != MapValue.road:
+            if self.map[_p] not in (MapValue.road, MapValue.st, MapValue.ed):
                 continue
             if res is not None:
                 return None
