@@ -4,3 +4,7 @@ class MazeException(Exception):
 
 class SolveException(MazeException):
     pass
+
+
+class QueueEmptyException(MazeException):
+    pass
