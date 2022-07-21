@@ -58,7 +58,7 @@ class Game:
             p = next_road
             self.move_list[step] = p
             next_road = self._move_find_road(p, lp)
-            
+
         self.move_step = step
         self.map[self.player.pos] = self.source_map[self.player.pos]
         self.player.pos = self.move_list[step]
@@ -67,6 +67,9 @@ class Game:
         self.player.step += step
         self.player.move_times += 1
         return True
-    
+
+    def __bool__(self):
+        return True
+
     def is_win(self):
         return self.map.ed == self.player.pos
