@@ -20,15 +20,15 @@ class GameShow(Generic[_T_result]):
 
     @property
     def map(self):
-        return self.game.map
+        return self.game.now_map
 
     @property
     def row(self):
-        return self.map.row
+        return self.game.map.row
 
     @property
     def column(self):
-        return self.map.column
+        return self.game.map.column
 
     def __getitem__(self, p: Point) -> Any:
         if p[0] < 0 or p[0] >= self.row:
