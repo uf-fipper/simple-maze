@@ -42,6 +42,8 @@ class Game:
         return res
 
     def move(self, move: MoveStatus):
+        if self.is_win:
+            return False
         lp = self.player.pos
         p = move.get_next(lp)
 
@@ -74,5 +76,6 @@ class Game:
     def __bool__(self):
         return True
 
+    @property
     def is_win(self):
         return self.map.ed == self.player.pos
