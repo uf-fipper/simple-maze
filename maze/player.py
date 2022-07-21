@@ -1,5 +1,5 @@
 from .point import Point
-from .on_show_object import OnShowObject
+from .onshowobject import OnShowObject
 
 
 class Player(OnShowObject):

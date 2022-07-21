@@ -4,7 +4,7 @@ from .random import Random
 from .mapvalue import MapValue
 from .exceptions import SolveException, QueueEmptyException
 from .point import Point
-from .on_show_object import OnShowObject
+from .onshowobject import OnShowObject
 
 from queue import Queue
 from typing import List, Tuple, TypeVar, Optional

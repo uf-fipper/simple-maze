@@ -1,6 +1,6 @@
 import enum
 
-from .on_show_object import OnShowObject, _T_func, _T_result
+from .onshowobject import OnShowObject, _T_func, _T_result
 
 from typing import Callable, TypeVar, Any, Optional
 
