@@ -2,7 +2,7 @@ import numpy as np
 
 from .random import Random
 from .mapvalue import MapValue
-from .exceptions import SolveException, QueueEmptyException
+from .exceptions import SolveException, QueueEmptyException, MapInitException
 from .point import Point
 
 from queue import Queue
@@ -118,6 +118,8 @@ class Map:
         :param column: 地图长
         :param random: 随机数种子
         """
+        if row < 2 or column < 2:
+            raise MapInitException(f'行和列不能小于2')
         self.random = random or Random()
         self.map: _T_map = np.zeros((row, column), dtype=MapValue)
         for i in range(self.row):
