@@ -127,7 +127,6 @@ class Map:
                 self.map[i, j] = MapValue.wall
 
         self._init_map()
-        self.source_map: _T_map = self.map.copy()
 
     def _solve_get_roads(self, map_temp: _T_map, p: Point):
         """
