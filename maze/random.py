@@ -4,6 +4,10 @@ from typing import List
 
 
 class Random(Random):  # type: ignore
+    def __init__(self, x=None):
+        super().__init__(x)
+        self.raw_seed = x
+
     def randindex(self, n: int):
         if n <= 0:
             raise ValueError('长度必须小于0')
