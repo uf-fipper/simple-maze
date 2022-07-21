@@ -71,6 +71,7 @@ class StrGameShow(GameShow[str]):
             MapValue.border: lambda x: f'{Back.RED} {Back.RESET}',
             MapValue.wall: lambda x: f'{Back.YELLOW} {Back.RESET}',
             MapValue.road: lambda x: ' ',
+            MapValue.move: lambda x: '.',
             MapValue.st: lambda x: f'{Fore.GREEN}S{Fore.RESET}',
             MapValue.ed: lambda x: f'{Fore.BLUE}E{Fore.RESET}',
             game.player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
