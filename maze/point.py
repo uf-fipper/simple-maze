@@ -19,4 +19,4 @@ class Point(namedtuple('Point', 'x y'), Generic[_T_p]):
     def __add__(self, other) -> "Point":
         if isinstance(other, (Point, tuple)):
             return Point(self[0] + other[0], self[1] + other[1])
-        return NotImplemented
+        raise TypeError(f"unsupported operand type(s) for +: 'Point' and '{type(other).__name__}'")
