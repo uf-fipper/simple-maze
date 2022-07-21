@@ -144,7 +144,7 @@ class Map:
             idx = map_temp[_p]
             if idx is not None:
                 continue
-            if self.map[_p] not in (MapValue.road, MapValue.st, MapValue.ed):
+            if self.map[_p] in (MapValue.wall,):
                 continue
             res.append(_p)
 

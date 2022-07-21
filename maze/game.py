@@ -33,7 +33,7 @@ class Game:
                 continue
             if _p == lp:
                 continue
-            if self.map[_p] not in (MapValue.road, MapValue.st, MapValue.ed):
+            if self.map[_p] in (MapValue.wall,):
                 continue
             if res is not None:
                 return None
@@ -45,7 +45,7 @@ class Game:
         lp = self.player.pos
         p = move.get_next(lp)
 
-        if self.map[p] != MapValue.road:
+        if self.map[p] == MapValue.wall:
             return False
 
         self.move_list[0] = lp
@@ -62,6 +62,9 @@ class Game:
         self.move_step = step
         self.map[self.player.pos] = self.source_map[self.player.pos]
         self.player.pos = self.move_list[step]
+        # move_list
+        for p in self.move_list[:step]:
+            self.map[p] = MapValue.move
         self.map[self.player.pos] = self.player
         self.is_move = True
         self.player.step += step
