@@ -1,8 +1,7 @@
 from .point import Point
-from .onshowobject import OnShowObject
 
 
-class Player(OnShowObject):
+class Player:
     def __init__(self, pos: Point, name: str = ''):
         """
         初始化一个玩家

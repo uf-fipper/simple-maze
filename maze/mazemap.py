@@ -4,13 +4,12 @@ from .random import Random
 from .mapvalue import MapValue
 from .exceptions import SolveException, QueueEmptyException
 from .point import Point
-from .onshowobject import OnShowObject
 
 from queue import Queue
-from typing import List, Tuple, TypeVar, Optional
+from typing import List, Tuple, TypeVar, Optional, Any
 from numpy.typing import NDArray
 
-_T_map = NDArray  # NDArray[OnShowObject]
+_T_map = NDArray[Any]
 
 
 class Map:
@@ -200,10 +199,10 @@ class Map:
     def column(self):
         return self.map.shape[1]
 
-    def __getitem__(self, item: Point) -> OnShowObject:
+    def __getitem__(self, item: Point) -> Any:
         return self.map[item]
 
-    def __setitem__(self, key: Point, value: OnShowObject):
+    def __setitem__(self, key: Point, value: Any):
         self.map[key] = value
 
     def __repr__(self):
