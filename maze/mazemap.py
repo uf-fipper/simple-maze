@@ -125,6 +125,7 @@ class Map:
                 self.map[i, j] = MapValue.wall
 
         self._init_map()
+        self.source_map: _T_map = self.map.copy()
 
     def _solve_get_roads(self, map_temp: _T_map, p: Point):
         """
@@ -204,24 +205,3 @@ class Map:
 
     def __setitem__(self, key: Point, value: Any):
         self.map[key] = value
-
-    def __repr__(self):
-        temp_res = np.zeros(((self.row + 2), (self.column + 3)), dtype=str)
-
-        for i in range(self.column + 2):
-            temp_res[0, i] = MapValue.border.value
-        temp_res[0, self.column + 2] = '\n'
-
-        for i in range(1, self.row + 1):
-            temp_res[i, 0] = MapValue.border.value
-            for j in range(1, self.column + 1):
-                temp_res[i, j] = self.map[i - 1, j - 1].value
-            temp_res[i, self.column + 1] = MapValue.border.value
-            temp_res[i, self.column + 2] = '\n'
-
-        for i in range(self.column + 2):
-            temp_res[self.row + 1, i] = MapValue.border.value
-
-        temp_res[self.row + 1, self.column + 2] = '\0'
-
-        return ''.join([''.join(each) for each in temp_res])
