@@ -6,8 +6,10 @@ from .mazemap import Map
 from .point import Point
 from .onshowcontainer import OnShowContainer
 from .mapvalue import MapValue
+from .gamevalue import GameValue
 
 from typing import TypeVar, Generic, Any
+from numpy.typing import NDArray
 
 _T_result = TypeVar('_T_result')
 
@@ -17,6 +19,7 @@ class GameShow(Generic[_T_result]):
         self.game = game
         self.container = container
         self._result = np.empty(((self.row + 2), (self.column + 2)), dtype=dtype)
+        self.update()
 
     @property
     def map(self):
@@ -68,9 +71,9 @@ class GameShow(Generic[_T_result]):
         
         # 上次的移动路径
         for p in self.game.move_list[:self.game.move_step]:
-            self[p] = self.container[MapValue.move]
+            self[p] = self.container[GameValue.move]
 
-    def get_result(self):
+    def update(self) -> NDArray:
         self.init_result()
         return self._result
 
@@ -84,7 +87,8 @@ class StrGameShow(GameShow[str]):
             MapValue.border: lambda x: f'{Back.RED} {Back.RESET}',
             MapValue.wall: lambda x: f'{Back.YELLOW} {Back.RESET}',
             MapValue.road: lambda x: ' ',
-            MapValue.move: lambda x: '.',
+            GameValue.move: lambda x: '.',
+            GameValue.solve: lambda x: f'{Fore.GREEN}+{Fore.RESET}',
             MapValue.st: lambda x: f'{Fore.GREEN}S{Fore.RESET}',
             MapValue.ed: lambda x: f'{Fore.BLUE}E{Fore.RESET}',
             game.player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
@@ -92,4 +96,4 @@ class StrGameShow(GameShow[str]):
         super().__init__(game, container, dtype=object)
 
     def format(self) -> str:
-        return '\n'.join((''.join(row) for row in self.get_result()))
+        return '\n'.join((''.join(row) for row in self._result))
