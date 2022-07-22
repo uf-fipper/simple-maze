@@ -1,4 +1,5 @@
 import numpy as np
+import colorama
 from colorama import Fore, Back
 
 from .game import Game
@@ -10,6 +11,8 @@ from .gamevalue import GameValue
 
 from typing import TypeVar, Generic, Any
 from numpy.typing import NDArray
+
+colorama.init(convert=True)
 
 _T_result = TypeVar('_T_result')
 
