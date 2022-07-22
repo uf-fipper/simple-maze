@@ -58,6 +58,8 @@ class Game:
         lp = self.player.pos
         p = move.get_next(lp)
 
+        if self.map.is_overrange(p):
+            return False
         if self.map[p] == MapValue.wall:
             return False
 
