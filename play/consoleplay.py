@@ -74,12 +74,14 @@ class Play:
                     # self.tips = "恭喜你获得胜利！按 ctrl + 'N' 或 ctrl + 'M' 开始新游戏"
                     print('恭喜你获得胜利！')
                     print(self.game_show.format())
-                    os.system("pause")
+                    # os.system("pause")
+                    input('按下回车结束游戏：')
                     return
                 else:
                     self.tips = ""
                 self.show()
                 self.listen()
+                # os.system('cls')
                 
                 if self.is_restart:
                     break
