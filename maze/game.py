@@ -75,6 +75,7 @@ class Game:
         if self.map[pos] not in (MapValue.road, MapValue.st, MapValue.ed):
             return False
         self.player.pos = pos
+        self.move_step = 0
         return True
 
     def __bool__(self):
