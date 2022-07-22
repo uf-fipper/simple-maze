@@ -20,7 +20,7 @@ class GameShow(Generic[_T_result]):
 
     @property
     def map(self):
-        return self.game.now_map
+        return self.game.map
 
     @property
     def row(self):
@@ -45,17 +45,30 @@ class GameShow(Generic[_T_result]):
         self._result[p + (1, 1)] = value
 
     def init_result(self):
+        # 第一行边界
         for i in range(self.column + 2):
             self._result[0, i] = self.container[MapValue.border]
 
+        # 地图信息
         for i in range(self.row):
+            # 第一列边界
             self._result[Point(i + 1, 0)] = self.container[MapValue.border]
+            # 地图信息
             for j in range(self.column):
                 self[Point(i, j)] = self.container[self.map[Point(i, j)]]
+            # 最后一列边界
             self._result[i + 1, self.column + 1] = self.container[MapValue.border]
 
+        # 最后一行边界
         for i in range(self.column + 2):
             self._result[self.row + 1, i] = self.container[MapValue.border]
+            
+        # 人物
+        self[self.game.player.pos] = self.container[self.game.player]
+        
+        # 上次的移动路径
+        for p in self.game.move_list[:self.game.move_step]:
+            self[p] = self.container[MapValue.move]
 
     def get_result(self):
         self.init_result()
