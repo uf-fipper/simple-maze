@@ -1,5 +1,6 @@
 from .game import Game
 from .mapvalue import MapValue
+from .gamevalue import GameValue
 from .mazemap import Map
 from .movestatus import MoveStatus
 from .onshowcontainer import OnShowContainer
