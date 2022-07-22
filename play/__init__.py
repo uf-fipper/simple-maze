@@ -1,1 +1,1 @@
-from .consoleplay import Play
+from .consoleplay import Play as ConsolePlay
