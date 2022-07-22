@@ -6,6 +6,7 @@ from .random import Random
 from .player import Player
 from .mapvalue import MapValue
 from .movestatus import MoveStatus
+from .exceptions import *
 
 from typing import Optional
 
@@ -66,6 +67,14 @@ class Game:
         self.is_move = True
         self.player.step += step
         self.player.move_times += 1
+        return True
+    
+    def move_player(self, pos: Point):
+        if self.map.is_overrange(pos):
+            raise MapIndexError(pos)
+        if self.map[pos] not in (MapValue.road, MapValue.st, MapValue.ed):
+            return False
+        self.player.pos = pos
         return True
 
     def __bool__(self):
