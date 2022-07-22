@@ -1,10 +1,13 @@
 from random import Random
+from time import time_ns
 
 from typing import List
 
 
 class Random(Random):  # type: ignore
     def __init__(self, x=None):
+        if x is None:
+            x = time_ns()
         super().__init__(x)
         self.raw_seed = x
 
