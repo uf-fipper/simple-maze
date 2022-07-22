@@ -18,6 +18,18 @@ class Game:
         self.move_list = np.empty(row * column, dtype=Point)
         self.move_step = 0
         self.is_move = False
+        
+    @property
+    def row(self):
+        return self.map.row
+    
+    @property
+    def column(self):
+        return self.map.column
+    
+    @property
+    def random(self):
+        return self.map.random
 
     def _move_find_road(self, p: Point, lp: Point) -> Optional[Point]:
         """
@@ -77,6 +89,12 @@ class Game:
         self.player.pos = pos
         self.move_step = 0
         return True
+    
+    def solve(self, pos: Point = None):
+        if pos is None:
+            pos = self.player.pos
+        solve_list = self.map.solve(pos)
+        return solve_list
 
     def __bool__(self):
         return True
