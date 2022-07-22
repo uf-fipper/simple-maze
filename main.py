@@ -2,7 +2,7 @@ from play import *
 
 
 def main():
-    Play().run()
+    ConsolePlay().run()
 
 
 if __name__ == '__main__':
