@@ -1,4 +1,6 @@
 import os
+import colorama
+from colorama import Fore, Back
 
 from maze import *
 from .exceptions import *
@@ -11,6 +13,26 @@ from pynput.keyboard import KeyCode, Key, HotKey
 from threading import Lock
 
 _T_KC = Optional[Union[Key, KeyCode]]
+
+colorama.init(convert=True)
+
+
+class ColorStrGameShow(GameShow[str]):
+    def __init__(self, game: Game, container: OnShowContainer[str] = None):
+        container = container or OnShowContainer(obj_funcs={
+            MapValue.border: lambda x: f'{Back.RED} {Back.RESET}',
+            MapValue.wall: lambda x: f'{Back.YELLOW} {Back.RESET}',
+            MapValue.road: lambda x: ' ',
+            GameValue.move: lambda x: '.',
+            GameValue.solve: lambda x: f'{Fore.GREEN}+{Fore.RESET}',
+            MapValue.st: lambda x: f'{Fore.GREEN}S{Fore.RESET}',
+            MapValue.ed: lambda x: f'{Fore.BLUE}E{Fore.RESET}',
+            game.player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
+        })
+        super().__init__(game, container, dtype=object)
+
+    def format(self) -> str:
+        return '\n'.join((''.join(row) for row in self._result))
 
 
 class Play:
