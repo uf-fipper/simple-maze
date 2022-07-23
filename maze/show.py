@@ -1,6 +1,4 @@
 import numpy as np
-import colorama
-from colorama import Fore, Back
 
 from .game import Game
 from .mazemap import Map
@@ -11,8 +9,6 @@ from .gamevalue import GameValue
 
 from typing import TypeVar, Generic, Any
 from numpy.typing import NDArray
-
-colorama.init(convert=True)
 
 _T_result = TypeVar('_T_result')
 
@@ -87,14 +83,14 @@ class GameShow(Generic[_T_result]):
 class StrGameShow(GameShow[str]):
     def __init__(self, game: Game, container: OnShowContainer[str] = None):
         container = container or OnShowContainer(obj_funcs={
-            MapValue.border: lambda x: f'{Back.RED} {Back.RESET}',
-            MapValue.wall: lambda x: f'{Back.YELLOW} {Back.RESET}',
+            MapValue.border: lambda x: f'X',
+            MapValue.wall: lambda x: f'X',
             MapValue.road: lambda x: ' ',
             GameValue.move: lambda x: '.',
-            GameValue.solve: lambda x: f'{Fore.GREEN}+{Fore.RESET}',
-            MapValue.st: lambda x: f'{Fore.GREEN}S{Fore.RESET}',
-            MapValue.ed: lambda x: f'{Fore.BLUE}E{Fore.RESET}',
-            game.player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
+            GameValue.solve: lambda x: f'+',
+            MapValue.st: lambda x: f'S',
+            MapValue.ed: lambda x: f'E',
+            game.player: lambda x: f'O',
         })
         super().__init__(game, container, dtype=object)
 
