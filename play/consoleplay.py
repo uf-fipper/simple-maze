@@ -53,9 +53,8 @@ class Play:
     def __init__(self):
         self.game = Game(2, 2)
         self.container: Optional[OnShowContainer] = None
-        self.game_show: Optional[GameShow] = None
+        self.game_show: GameShow = ColorStrGameShow(self.game)
         self.tips = ''
-        self.listener: Optional[keyboard.Listener] = None
         self.listener_over = False
         
         self.attr_lock = Lock()
@@ -90,7 +89,7 @@ class Play:
             else:
                 self.new_game()
             while True:
-                self.game_show = StrGameShow(self.game, self.container)
+                self.game_show = ColorStrGameShow(self.game, self.container)
 
                 if self.game.is_win:
                     # self.tips = "恭喜你获得胜利！按 ctrl + 'N' 或 ctrl + 'M' 开始新游戏"
@@ -138,7 +137,6 @@ class Play:
             Key.right: lambda: self.game.move(MoveStatus.right),
             KeyCode(char='r'): lambda: self.game.move_player(self.game.map.st),
             KeyCode(char='R'): lambda: self.game.move_player(self.game.map.st),
-            KeyCode(char='\x12'): lambda: setattr(self, 'is_restart', True),
         }
         if key in key_actions:
             key_actions[key]()
@@ -152,11 +150,11 @@ class Play:
         self.listener_over = True
 
     def listen(self):
-        self.listener = keyboard.Listener(on_press=self.on_press)
-        self.listener.start()
+        listener = keyboard.Listener(on_press=self.on_press)
+        listener.start()
         while not self.listener_over:
             pass
-        self.listener.stop()
+        listener.stop()
         self.listener_over = False
 
     def new_game(self) -> Game:
