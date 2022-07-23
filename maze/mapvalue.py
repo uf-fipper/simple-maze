@@ -6,6 +6,5 @@ class MapValue(enum.Enum):
     wall = 'O'
     road = ' '
     border = 'X'
-    move = '.'
     st = 'P'
     ed = 'E'
