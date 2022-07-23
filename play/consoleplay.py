@@ -26,7 +26,7 @@ class ColorStrGameShow(GameShow[str]):
             GameValue.solve: lambda x: f'{Fore.GREEN}+{Fore.RESET}',
             MapValue.st: lambda x: f'{Fore.GREEN}S{Fore.RESET}',
             MapValue.ed: lambda x: f'{Fore.BLUE}E{Fore.RESET}',
-            game.player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
+            Player: lambda x: f'{Fore.GREEN}P{Fore.RESET}',
         })
         super().__init__(game, container, dtype=object)
 
