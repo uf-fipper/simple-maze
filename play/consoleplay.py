@@ -4,8 +4,7 @@ from colorama import Fore, Back
 
 from maze import *
 from .exceptions import *
-
-# from pynput.keyboard import on_press, KeyboardEvent
+from ._play import AbstractPlay
 
 from typing import Iterable, Union, Optional, Callable
 from pynput import keyboard
@@ -35,7 +34,7 @@ class ColorStrGameShow(GameShow[str]):
         return '\n'.join((''.join(row) for row in self._result))
 
 
-class Play:
+class Play(AbstractPlay):
     @property
     def how_to_play(self):
         return (
@@ -51,10 +50,7 @@ class Play:
         )
 
     def __init__(self):
-        self.game = Game(2, 2)
-        self.container: Optional[OnShowContainer] = None
-        self.game_show: GameShow = ColorStrGameShow(self.game)
-        self.tips = ''
+        super().__init__()
         self.listener_over = False
         
         self.attr_lock = Lock()
@@ -80,36 +76,41 @@ class Play:
     def is_solve(self, value):
         with self.attr_lock:
             self._is_solve = value
+            
+    def restart(self):
+        self.game = Game(self.game.row, self.game.column, random=Random(self.game.random.raw_seed))
+        self.is_restart = False
+        
+    def new_game_show(self):
+        self.game_show = ColorStrGameShow(self.game)
 
-    def run(self):
+    def new_game(self) -> Game:
         while True:
-            if self.is_restart:
-                self.game = Game(self.game.row, self.game.column, random=Random(self.game.random.raw_seed))
-                self.is_restart = False
-            else:
-                self.new_game()
-            while True:
-                self.game_show = ColorStrGameShow(self.game, self.container)
-
-                if self.game.is_win:
-                    # self.tips = "恭喜你获得胜利！按 ctrl + 'N' 或 ctrl + 'M' 开始新游戏"
-                    print('恭喜你获得胜利！')
-                    print(self.game_show.format())
-                    # os.system("pause")
-                    input('按下回车结束游戏：')
-                    return
-                else:
-                    self.tips = ""
-                self.show()
-                self.listen()
-                # os.system('cls')
-                
-                if self.is_restart:
-                    break
+            inps = input('请输入迷宫的行和列，中间用空格隔开：').split()
+            try:
+                args = map(lambda x: int(x), inps)
+                break
+            except ValueError:
+                print('确保输入是两个整数，', end='')
+        self.game = Game(*args)
+        return self.game
+    
+    def wait_action(self):
+        self.listen()
 
     def show(self):
         if not self.game_show:
             raise Exception
+
+        if self.game.is_win:
+            # self.tips = "恭喜你获得胜利！按 ctrl + 'N' 或 ctrl + 'M' 开始新游戏"
+            print('恭喜你获得胜利！')
+            print(self.game_show.format())
+            # os.system("pause")
+            input('按下回车结束游戏：')
+            raise StopException
+        else:
+            self.tips = ""
         print(self.how_to_play)
         print(f'种子：{self.game.map.random.raw_seed}')
         print(f'步数：{self.game.player.step}')
@@ -156,14 +157,3 @@ class Play:
             pass
         listener.stop()
         self.listener_over = False
-
-    def new_game(self) -> Game:
-        while True:
-            inps = input('请输入迷宫的行和列，中间用空格隔开：').split()
-            try:
-                args = map(lambda x: int(x), inps)
-                break
-            except ValueError:
-                print('确保输入是两个整数，', end='')
-        self.game = Game(*args)
-        return self.game
