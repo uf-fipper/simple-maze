@@ -5,3 +5,6 @@ __pycache__/
 mypy.ini
 
 pytest.ini
+
+images/
+videos/
