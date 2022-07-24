@@ -42,7 +42,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('.'),
+                Text('.', height=self.side_length / 4, width=self.side_length / 4),
             )
             return obj
 
@@ -50,7 +50,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('+'),
+                Text('+', height=self.side_length / 2, width=self.side_length / 2),
             )
             return obj
 
@@ -58,7 +58,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('始', font="微软雅黑")
+                Text('始', font="微软雅黑", height=self.side_length, width=self.side_length)
             )
             return obj
 
@@ -66,7 +66,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('终', font="微软雅黑")
+                Text('终', font="微软雅黑", height=self.side_length, width=self.side_length)
             )
             return obj
 
@@ -74,14 +74,18 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x: Player):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('人', font="微软雅黑")
+                Text('人', font="微软雅黑", height=self.side_length, width=self.side_length)
             )
             return obj
 
 
 class ManimglGameShow(GameShow[Mobject]):
     def __init__(self, game: Game):
-        super().__init__(game, ManimContainer(1), dtype=object)
+        if (game.column + 2) / (game.row + 2) >= ASPECT_RATIO:
+            side_length = FRAME_WIDTH / (game.column + 2)
+        else:
+            side_length = FRAME_HEIGHT / (game.row + 2)
+        super().__init__(game, ManimContainer(side_length), dtype=object)
 
     def format(self) -> Group:
         group = Group()
@@ -89,18 +93,23 @@ class ManimglGameShow(GameShow[Mobject]):
             for obj in row:
                 group.add(obj)
         return group.arrange_in_grid(*self._result.shape, buff=0)
-
-
-class ColorStrGameShow(GameShow[Mobject]):
-    def __init__(self, game: Game):
-        super().__init__(game, ManimContainer(2), dtype=object)
-
-    def format(self) -> Group:
-        group = Group()
-        for row in self._result:
-            for obj in row:
-                group.add(obj)
-        return group.arrange_in_grid(*self._result.shape)
+    
+    
+class GameTextbox(Textbox):
+    def on_key_press(self, mob: Mobject, event_data: dict[str, int]) -> Optional[bool]:
+        symbol = event_data['symbol']
+        modifiers = event_data['modifiers']
+        if modifiers != 16:
+            return None
+        if symbol == 65288:  # backspace
+            return super().on_key_press(mob, {'symbol': symbol, 'modifiers': modifiers})
+        if len(self.text.text) >= 2:
+            return None
+        if 65456 <= symbol <= 65465:
+            symbol -= (65456 - ord('0'))
+        if ord('0') <= symbol <= ord('9'):
+            return super().on_key_press(mob, {'symbol': symbol, 'modifiers': modifiers})
+        # return None
 
 
 class Play(Scene, AbstractPlay):
@@ -108,16 +117,50 @@ class Play(Scene, AbstractPlay):
         Scene.__init__(self, **kwargs)
         AbstractPlay.__init__(self)
         self.start_next = True
+        self.confirm_mutex = False
         self.show_group: Optional[Group] = None
+        self.input_group: Optional[Group] = None
 
-    def new_game(self) -> Game:
-        self.game = Game(4, 8, random=Random(123456))
-        return self.game
+    def new_game(self):
+        if self.show_group:
+            self.play(FadeOut(self.show_group))
+            self.show_group = None
+            
+        def confirm_on_click(mob: Mobject):
+            try:
+                if self.confirm_mutex:
+                    return
+                self.confirm_mutex = True
+                row = int(row_label.text.text)
+                column = int(column_label.text.text)
+                if row < 2 or column < 2:
+                    raise ValueError
+                self.game = Game(row, column)
+                self.new_game_show()
+                self.show()
+                self.confirm_mutex = False
+            except ValueError:
+                assert self.input_group is not None
+                input_group2 = Group(*self.input_group[:-1], Text("行和列都必须是大于1的整数", font="宋体")).arrange(DOWN)
+                self.remove(self.input_group)
+                self.add(input_group2)
+                self.input_group = input_group2
+                self.confirm_mutex = False
+            
+        row_label = GameTextbox("7")
+        column_label = GameTextbox("14")
+        confirm_button = Button(Square(), on_click=confirm_on_click)
+        tips = Text("", font="微软雅黑")
+        self.input_group = Group(row_label, column_label, confirm_button, tips).arrange(DOWN)
+        self.add(self.input_group)
 
     def new_game_show(self):
         self.game_show = ManimglGameShow(self.game)
 
     def show(self):
+        if self.input_group:
+            self.remove(self.input_group)
+            self.input_group = None
         self.game_show.update()
         group = self.game_show.format()
         if self.show_group is None:
@@ -126,7 +169,8 @@ class Play(Scene, AbstractPlay):
         else:
             self.play(Transform(self.show_group, group))
         if self.game.is_win:
-            raise StopException
+            self.new_game()
+            return
         self.start_next = False
 
     def wait_action(self):
@@ -135,6 +179,7 @@ class Play(Scene, AbstractPlay):
     def on_key_press(self, symbol: int, modifiers: int) -> None:
         if self.start_next:
             return super().on_key_press(symbol, modifiers)
+        self.start_next = True
         try:
             char = chr(symbol)
         except OverflowError:
@@ -152,17 +197,17 @@ class Play(Scene, AbstractPlay):
                 self.game.move(MoveStatus.down)
             else:
                 return super().on_key_press(symbol, modifiers)
-            self.start_next = True
+            self.show()
         
         elif modifiers == 18:  # ctrl
             if char == 'r':
                 self.restart()
             else:
                 return super().on_key_press(symbol, modifiers)
-            self.start_next = True
+            self.show()
             
         else:
             return super().on_key_press(symbol, modifiers)
 
-    def construct(self) -> None:
-        AbstractPlay.run(self)
+    def setup(self) -> None:
+        self.new_game()
