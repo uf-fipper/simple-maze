@@ -1,4 +1,5 @@
 from manimlib import *
+from pyglet.window import key
 
 from maze import *
 from .exceptions import *
@@ -99,17 +100,20 @@ class GameTextbox(Textbox):
     def on_key_press(self, mob: Mobject, event_data: dict[str, int]) -> Optional[bool]:
         symbol = event_data['symbol']
         modifiers = event_data['modifiers']
-        if modifiers != 16:
+        modifiers = modifiers & ~key.MOD_NUMLOCK  # 排除小键盘NumLock
+        modifiers = modifiers & ~key.MOD_CAPSLOCK  # 排除CapsLK
+        print(symbol, modifiers)
+        if modifiers:
             return None
-        if symbol == 65288:  # backspace
+        if symbol == key.BACKSPACE:  # backspace
             return super().on_key_press(mob, {'symbol': symbol, 'modifiers': modifiers})
         if len(self.text.text) >= 2:
             return None
-        if 65456 <= symbol <= 65465:
-            symbol -= (65456 - ord('0'))
-        if ord('0') <= symbol <= ord('9'):
+        if key.NUM_0 <= symbol <= key.NUM_9:
+            symbol -= (key.NUM_0 - key._0)
+        if key._0 <= symbol <= key._9:
             return super().on_key_press(mob, {'symbol': symbol, 'modifiers': modifiers})
-        # return None
+        return None
 
 
 class Play(Scene, AbstractPlay):
@@ -138,13 +142,13 @@ class Play(Scene, AbstractPlay):
                 self.game = Game(row, column)
                 self.new_game_show()
                 self.show()
-                self.confirm_mutex = False
             except ValueError:
                 assert self.input_group is not None
                 input_group2 = Group(*self.input_group[:-1], Text("行和列都必须是大于1的整数", font="宋体")).arrange(DOWN)
                 self.remove(self.input_group)
                 self.add(input_group2)
                 self.input_group = input_group2
+            finally:
                 self.confirm_mutex = False
             
         row_label = GameTextbox("7")
@@ -185,22 +189,24 @@ class Play(Scene, AbstractPlay):
         except OverflowError:
             log.warning("The value of the pressed key is too large.")
             return
-        if modifiers == 16:
+        modifiers = modifiers & ~key.MOD_NUMLOCK  # 排除小键盘NumLock
+        modifiers = modifiers & ~key.MOD_CAPSLOCK  # 排除CapsLK
+        if not modifiers:
             # 没有功能键
-            if symbol == 65361:  # 左
+            if symbol == key.LEFT:  # 左
                 self.game.move(MoveStatus.left)
-            elif symbol == 65362:  # 上
+            elif symbol == key.UP:  # 上
                 self.game.move(MoveStatus.up)
-            elif symbol == 65363:  # 右
+            elif symbol == key.RIGHT:  # 右
                 self.game.move(MoveStatus.right)
-            elif symbol == 65364:  # 下
+            elif symbol == key.DOWN:  # 下
                 self.game.move(MoveStatus.down)
             else:
                 return super().on_key_press(symbol, modifiers)
             self.show()
         
-        elif modifiers == 18:  # ctrl
-            if char == 'r':
+        elif modifiers == key.MOD_CTRL:
+            if char == key.R:
                 self.restart()
             else:
                 return super().on_key_press(symbol, modifiers)
