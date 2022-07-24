@@ -58,7 +58,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('始', font="微软雅黑", height=self.side_length, width=self.side_length)
+                Text('始', font="宋体", height=self.side_length, width=self.side_length)
             )
             return obj
 
@@ -66,7 +66,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('终', font="微软雅黑", height=self.side_length, width=self.side_length)
+                Text('终', font="宋体", height=self.side_length, width=self.side_length)
             )
             return obj
 
@@ -74,7 +74,7 @@ class ManimContainer(OnShowContainer[Mobject]):
         def _(x: Player):
             obj = VGroup(
                 Square(self.side_length).set_stroke(opacity=0),
-                Text('人', font="微软雅黑", height=self.side_length, width=self.side_length)
+                Text('人', font="宋体", height=self.side_length, width=self.side_length)
             )
             return obj
 
@@ -150,7 +150,7 @@ class Play(Scene, AbstractPlay):
         row_label = GameTextbox("7")
         column_label = GameTextbox("14")
         confirm_button = Button(Square(), on_click=confirm_on_click)
-        tips = Text("", font="微软雅黑")
+        tips = Text("", font="宋体")
         self.input_group = Group(row_label, column_label, confirm_button, tips).arrange(DOWN)
         self.add(self.input_group)
 
