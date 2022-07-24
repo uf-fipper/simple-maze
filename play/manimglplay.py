@@ -206,7 +206,7 @@ class Play(Scene, AbstractPlay):
             self.show()
         
         elif modifiers == key.MOD_CTRL:
-            if char == key.R:
+            if symbol == key.R:
                 self.restart()
             else:
                 return super().on_key_press(symbol, modifiers)
