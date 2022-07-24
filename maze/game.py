@@ -19,6 +19,11 @@ class Game:
         self.move_step = 0
         self.is_move = False
         
+    def restart(self):
+        self.player = Player(self.map.st)
+        self.move_step = 0
+        self.is_move = False
+        
     @property
     def row(self):
         return self.map.row
