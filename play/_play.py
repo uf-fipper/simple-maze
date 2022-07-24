@@ -19,7 +19,7 @@ class AbstractPlay:
         self.game.restart()
         self.new_game_show()
 
-    def new_game(self) -> Game:
+    def new_game(self):
         raise NotImplementedError
         
     def new_game_show(self):

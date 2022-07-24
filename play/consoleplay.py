@@ -68,7 +68,7 @@ class Play(AbstractPlay):
     def new_game_show(self):
         self.game_show = ColorStrGameShow(self.game)
 
-    def new_game(self) -> Game:
+    def new_game(self):
         while True:
             inps = input('请输入迷宫的行和列，中间用空格隔开：').split()
             try:
@@ -77,7 +77,6 @@ class Play(AbstractPlay):
             except ValueError:
                 print('确保输入是两个整数，', end='')
         self.game = Game(*args)
-        return self.game
     
     def wait_action(self):
         self.listen()
