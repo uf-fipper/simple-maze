@@ -54,18 +54,6 @@ class Play(AbstractPlay):
         self.listener_over = False
         
         self.attr_lock = Lock()
-        self._is_restart = False
-        self._is_solve = False
-        
-    @property
-    def is_restart(self):
-        with self.attr_lock:
-            return self._is_restart
-
-    @is_restart.setter
-    def is_restart(self, value):
-        with self.attr_lock:
-            self._is_restart = value
             
     @property
     def is_solve(self):
@@ -76,10 +64,6 @@ class Play(AbstractPlay):
     def is_solve(self, value):
         with self.attr_lock:
             self._is_solve = value
-            
-    def restart(self):
-        self.game = Game(self.game.row, self.game.column, random=Random(self.game.random.raw_seed))
-        self.is_restart = False
         
     def new_game_show(self):
         self.game_show = ColorStrGameShow(self.game)
@@ -102,6 +86,7 @@ class Play(AbstractPlay):
         if not self.game_show:
             raise Exception
 
+        self.game_show.update()
         if self.game.is_win:
             # self.tips = "恭喜你获得胜利！按 ctrl + 'N' 或 ctrl + 'M' 开始新游戏"
             print('恭喜你获得胜利！')
@@ -116,7 +101,6 @@ class Play(AbstractPlay):
         print(f'步数：{self.game.player.step}')
         print(f'执行次数：{self.game.player.move_times}')
         
-        self.game_show.update()
         if self.is_solve and not self.game.is_win:
             solve_list = self.game.solve()
             for l in solve_list[1:-1]:
@@ -142,7 +126,7 @@ class Play(AbstractPlay):
         if key in key_actions:
             key_actions[key]()
         elif key == KeyCode(char='\x12'):  # ctrl + R
-            self.is_restart = True
+            self.restart()
         elif key == KeyCode(char='\x13'):  # ctrl + S
             with self.attr_lock:
                 self._is_solve = not self._is_solve

@@ -13,12 +13,11 @@ class AbstractPlay:
         self.tips = ''
         
         self.last_action = None
-        self._is_restart = False
         self._is_solve = False
             
     def restart(self):
-        self.game = Game(self.game.row, self.game.column, random=Random(self.game.random.raw_seed))
-        self._is_restart = False
+        self.game.restart()
+        self.new_game_show()
 
     def new_game(self) -> Game:
         raise NotImplementedError
@@ -35,16 +34,10 @@ class AbstractPlay:
     def run(self):
         try:
             while True:
-                if self._is_restart:
-                    self.restart()
-                else:
-                    self.new_game()
+                self.new_game()
                 self.new_game_show()
                 while True:
                     self.show()
                     self.wait_action()
-                    
-                    if self._is_restart:
-                        break
         except StopException:
             return
